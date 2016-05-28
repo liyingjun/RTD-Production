@@ -24,6 +24,11 @@ Installation
     source bin/activate
     pip install psycopg2 redis django-redis-cache django-redis-sessions
     pip install --upgrade hiredis
+    # make sure the system virtualenv version
+    
+    deactive
+    pip install virtualenv==15.0.1
+    
 
 --------------
 verified redis
@@ -168,38 +173,72 @@ setup a vhost (`/etc/apache2/sites-available/docs.my-domain.com.conf`)
         </Directory>
     </VirtualHost>
 
-fix the permissions for apache:
+Fix the permissions for apache:
 
     sudo chown -R www-data: /usr/share/readthedocs
 
-and create cache dir in apache home directory:
+Create cache dir in apache home directory:
 
     sudo mkdir /var/www/.cache/
     sudo chown www-data: /var/www/.cache
 
-enable the vhost and restart:
+Enable the vhost and restart:
 
     sudo a2ensite docs.my-domain.com.conf
-    sudo service apache2 graceful
+    sudo service apache2 restart
 
+-------------
 ElasticSearch
+-------------
 
-    sudo apt-get install icedtea-7-jre-jamvm
+    sudo apt-get install openjdk-7-jre-headless
     wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
-    echo "deb http://packages.elastic.co/elasticsearch/1.7/debian stable main" | sudo tee -a /etc/apt/sources.list.d/elasticsearch-1.7.list
+    echo "deb http://packages.elastic.co/elasticsearch/1.3/debian stable main" | sudo tee -a /etc/apt/sources.list.d/elasticsearch-1.3.list
     sudo apt-get update && sudo apt-get install elasticsearch
 
-edit `/etc/elasticsearch/elasticsearch.yml` and add the lines:
+Edit `/etc/elasticsearch/elasticsearch.yml` and add the lines:
 
     network.bind_host: localhost
     network.host: localhost
 
-and restart ES:
+Configure Elasticsearch to automatically start during bootup:
 
-    sudo service elasticsearch restart
-
-add icu as specified:
+    sudo update-rc.d elasticsearch defaults 95 10
+    
+Add icu as specified:
 
     sudo /usr/share/elasticsearch/bin/plugin -install elasticsearch/elasticsearch-analysis-icu/2.3.0
 
-and restart apache
+Restart ES:
+
+    sudo service elasticsearch restart
+
+----------------
+Setup ES mapping
+----------------
+
+Add a new script `/usr/share/readthedocs/checkouts/readthedocs.org/put_mapping.py`
+
+    import os
+
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "readthedocs.settings.postgres")
+
+    from readthedocs.search.indexes import Index, PageIndex, ProjectIndex, SectionIndex
+
+    # Create the index.
+    index = Index()
+    index_name = index.timestamped_index()
+    index.create_index(index_name)
+    index.update_aliases(index_name)
+    # Update mapping
+    proj = ProjectIndex()
+    proj.put_mapping()
+    page = PageIndex()
+    page.put_mapping()
+    sec = SectionIndex()
+    sec.put_mapping()
+    
+Running the script:
+
+    source /usr/share/readthedocs/bin/active
+    python put_mapping.py
