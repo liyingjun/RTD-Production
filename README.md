@@ -6,7 +6,7 @@ Installation
 
     sudo mkdir /usr/share/readthedocs
     sudo chown your_username readthedocs
-    sudo apt-get install build-essential python-dev libxml2-dev libxslt1-dev zlib1g-dev virtualenv git 
+    sudo apt-get install build-essential python-dev libxml2-dev libxslt1-dev zlib1g-dev git texlive-latex-base
     cd /usr/share/ 
     virtualenv readthedocs 
     cd readthedocs 
