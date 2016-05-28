@@ -48,7 +48,7 @@ Add a new file `postgres.py` to `/usr/share/readthedocs/checkouts/readthedocs.or
     
     from .base import *
     
-    DEBUG = False
+    DEBUG = True
     PRODUCTION_DOMAIN = '192.168.80.129'
     PUBLIC_API_URL = 'https://{0}'.format(PRODUCTION_DOMAIN)
    
