@@ -94,7 +94,9 @@ Add a new file `postgres.py` to `/usr/share/readthedocs/checkouts/readthedocs.or
     CELERYD_HIJACK_ROOT_LOGGER = True
     CELERY_EAGER_PROPAGATES_EXCEPTIONS = True
     #CELERY_REDIRECT_STDOUTS_LEVEL = 'DEBUG'
-    CELERY_ALWAYS_EAGER = True
+    # You will need to start a celery server by running `./manage.py celeryd`
+    # if CELERY_ALWAYS_EAGER is set to False
+    CELERY_ALWAYS_EAGER = False
     CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
     
     CACHES = {
@@ -242,3 +244,11 @@ Running the script:
 
     source /usr/share/readthedocs/bin/active
     python put_mapping.py
+
+--------------
+Running celery
+--------------
+
+    ./manage.py celeryd_detach
+or
+    [Daemonizing](http://docs.celeryproject.org/en/latest/tutorials/daemonizing.html)
