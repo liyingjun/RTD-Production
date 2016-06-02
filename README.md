@@ -51,6 +51,11 @@ Add a new file `postgres.py` to `/usr/share/readthedocs/checkouts/readthedocs.or
     DEBUG = True
     PRODUCTION_DOMAIN = '192.168.80.129'
     PUBLIC_API_URL = 'https://{0}'.format(PRODUCTION_DOMAIN)
+    
+    SERVE_DOCS = ['private', 'public']
+    PYTHON_MEDIA = True
+    
+    DOCROOT = '/opt/rtd'
    
     SLUMBER_USERNAME = 'test'
     SLUMBER_PASSWORD = 'test'
@@ -97,7 +102,13 @@ Add a new file `postgres.py` to `/usr/share/readthedocs/checkouts/readthedocs.or
     # You will need to start a celery server by running `./manage.py celeryd`
     # if CELERY_ALWAYS_EAGER is set to False
     CELERY_ALWAYS_EAGER = False
+    CELERYD_PREFETCH_MULTIPLIER = 8
     CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+    
+    CELERY_QUEUES = (
+    Queue('celery', Exchange('celery'), routing_key='celery'),
+    Queue('web',  Exchange('web'),   routing_key='web'),
+    )
     
     CACHES = {
         'default': {
