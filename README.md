@@ -263,3 +263,13 @@ Running celery
     ./manage.py celeryd_detach
 or
     [Daemonizing](http://docs.celeryproject.org/en/latest/tutorials/daemonizing.html)
+
+-------------------------
+Config allauth for Github
+-------------------------
+
+Add [new application](https://github.com/settings/applications/new)
+
+Add new site and social application on your local rtd: http://localhost/admin
+
+Note: Make sure settings.SITE_ID is the same with the site created in database.
